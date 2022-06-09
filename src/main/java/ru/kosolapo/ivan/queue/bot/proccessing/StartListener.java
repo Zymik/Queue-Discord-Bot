@@ -88,23 +88,24 @@ public class StartListener {
     }
 
     private List<Validator> validatorsByAnnotation(Stream<Annotation> annotations) {
-        return validators(annotations(annotations));
+        Set<Annotation> visited = new HashSet<>();
+        return validators(annotations(annotations, visited));
     }
 
     private List<Validator> validators(Stream<Class<? extends Validator>> annotated) {
         return annotated.map(x -> (Validator) factory.getBean(x)).distinct().toList();
     }
 
-    private Stream<Class<? extends Validator>> annotations(Stream<Annotation> annotations) {
+    private Stream<Class<? extends Validator>> annotations(Stream<Annotation> annotations, Set<Annotation> visited) {
         return annotations.flatMap(annotation -> {
+            if (visited.contains(annotation)) {
+                return Stream.empty();
+            }
+            visited.add(annotation);
             if (annotation instanceof ValidationAnnotation validationAnnotation) {
                 return Stream.of(validationAnnotation.value());
             }
-            //looks bad, needs to be fixed
-            if (annotation.annotationType().getName().startsWith("ru.kosolapo.ivan")) {
-                return annotations(Arrays.stream(annotation.annotationType().getAnnotations()));
-            }
-            return Stream.empty();
+            return annotations(Arrays.stream(annotation.annotationType().getAnnotations()), visited);
         });
     }
 }

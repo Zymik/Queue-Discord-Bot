@@ -17,7 +17,7 @@ public interface QueueService {
 
     Mono<Boolean> exist(Snowflake guild, String name);
 
-    Mono<Void> write(Snowflake guild, String name);
+    Mono<Message> write(Snowflake guild, String name);
 
     Mono<Void> flush(Snowflake guild, String name);
 }

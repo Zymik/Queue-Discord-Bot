@@ -64,8 +64,8 @@ public class QueueServiceInMemory implements QueueService {
     }
 
     @Override
-    public Mono<Void> write(Snowflake guild, String name) {
-        return messages.get(new QueueIdentifier(guild, name)).edit().withContentOrNull(getStringOf(guild, name)).then();
+    public Mono<Message> write(Snowflake guild, String name) {
+        return messages.get(new QueueIdentifier(guild, name)).edit().withContentOrNull(getStringOf(guild, name));
     }
 
     @Override
